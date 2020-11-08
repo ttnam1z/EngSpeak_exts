@@ -10,8 +10,12 @@ function checked() {
       //{file:"popup_detail.js"});
       {code:"console.log(\"fuck1\")"});
     */
-    localStorage['cus_checkauto']=ckbox.checked;
-    console.log("checked");
+    chrome.storage.local.set({"cus_checkauto":ckbox.checked.toString()},function (){
+          console.log("checked");
+          window.close();
+        });      
+    //localStorage.setItem("cus_checkauto",ckbox.checked.toString() );
+    //console.log("checked");
     //window.close();
 }
 
@@ -34,15 +38,35 @@ document.addEventListener("DOMContentLoaded", function(){ //use to load script a
 		ckbox.addEventListener("change",checked,false);
      });*/
 	
-	//chrome.tabs.executeScript(null,
-      //{file:"popup_detail.js"});
-      //{code:"console.log(\"fuck2\")"});
-	if (localStorage.getItem('cus_checkauto') === null){
-        localStorage['cus_checkauto'] = true;
-        console.log("checked");
+	
+    //Set some content from browser action
+    
+    chrome.storage.local.get(['cus_checkauto'],function (obj){ 
+    	if (typeof(obj["cus_checkauto"])==='undefined'){
+        chrome.storage.local.set({"cus_checkauto":"true"},function (){
+          console.log("Storage Succesful");
+          ckbox.checked = true;
+    	  document.getElementById("cus_checkauto").addEventListener("change",checked,false);
+        });      
+        
+      } else {
+      	console.log(obj['cus_checkauto']);
+    	ckbox.checked = (obj["cus_checkauto"].toString() === 'true');
+    	document.getElementById("cus_checkauto").addEventListener("change",checked,false);
       }
-    console.log(localStorage['cus_checkauto']);
-    ckbox.checked = (localStorage['cus_checkauto'] === 'true');
-    document.getElementById("cus_checkauto").addEventListener("change",checked,false);
+      	
+    });
+
+    
+
+
+	//if (localStorage.getItem('cus_checkauto') === null){
+    //    localStorage.setItem("cus_checkauto", "true");
+    //    console.log("checked");
+    //  }
+    
+    //console.log(localStorage['cus_checkauto']);
+    //ckbox.checked = (localStorage.getItem('cus_checkauto') === 'true');
+    //document.getElementById("cus_checkauto").addEventListener("change",checked,false);
 });
 

@@ -15,12 +15,23 @@ var prevDOM = null;
 document.addEventListener('mouseup', function (e) {
   console.log("catch event\n");
   if (window.getSelection) {
-      if (localStorage.getItem('cus_checkauto') === null){
-        localStorage['cus_checkauto'] = true;
+    chrome.storage.local.get(['cus_checkauto'],function (obj){ // storage has problem of sync so cant use
+      
+      //console.log(typeof(obj["cus_checkauto"])==='undefined');
+      console.log(obj["cus_checkauto"]);
+      //chrome.tabs.executeScript(null,
+        //{code:"console.log(\"aa "+ JSON.stringify(obj).toString()+"\")"});
+
+      if (typeof(obj["cus_checkauto"])==='undefined'){
+        chrome.storage.local.set({"cus_checkauto":"true"},function (){
+          console.log("Storage Succesful");
+        });      
+        obj["cus_checkauto"] = "true";
         console.log("fuck");
       }
+
       console.log("fucka");
-      var autospeak=localStorage["cus_checkauto"];
+      var autospeak=obj["cus_checkauto"].toString();
       if(autospeak === "true"){
         var  text = window.getSelection().toString();
         var msg = new SpeechSynthesisUtterance();
@@ -33,6 +44,10 @@ document.addEventListener('mouseup', function (e) {
         msg.voice=voices[4];//english UK male
         window.speechSynthesis.speak(msg);
       }
+    });
+
+      
+      
       
       
   // Lets check if our underlying element is a DIV.
